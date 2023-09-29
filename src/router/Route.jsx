@@ -5,11 +5,16 @@ import HomePage from "../page/HomePage";
 import FriendPage from "../page/FriendPage";
 import ProfilePage from "../page/ProfilePage";
 import { RouterProvider } from "react-router-dom";
+import RedirectIfAuthenticated from "../features/auth/RedirectIfAuthenticated";
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <LoginPage />,
+    element: (
+      <RedirectIfAuthenticated>
+        <LoginPage />
+      </RedirectIfAuthenticated>
+    ),
   },
   {
     path: "/",
