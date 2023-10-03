@@ -1,31 +1,55 @@
 import { useState } from "react";
 import { createContext } from "react";
 import axios from "../config/axios";
-import { addAccessToken } from "../utils/local-storage";
+import {
+  addAccessToken,
+  getAccessToken,
+  removeAccessToken,
+} from "../utils/local-storage";
 import { useEffect } from "react";
 
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("/auth/me").then((res) => {
-      setAuthUser(res.data.user);
-    });
+    if (getAccessToken()) {
+      axios
+        .get("/auth/me")
+        .then((res) => {
+          setAuthUser(res.data.user);
+        })
+        .finally(() => {
+          setInitialLoading(false);
+        });
+    } else {
+      setInitialLoading(false);
+    }
   }, []);
 
   const login = async (credential) => {
-    try {
-      const res = await axios.post("/auth/login", credential);
-      addAccessToken(res.data.accessToken);
-      setAuthUser(res.data.user);
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await axios.post("/auth/login", credential);
+    addAccessToken(res.data.accessToken);
+    setAuthUser(res.data.user);
   };
+
+  const register = async (registerInputObject) => {
+    const res = await axios.post("/auth/registe", registerInputObject);
+    addAccessToken(res.data.accessToken);
+    setAuthUser(res.data.user);
+  };
+
+  const logout = () => {
+    removeAccessToken();
+    setAuthUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ login, authUser }}>
+    <AuthContext.Provider
+      value={{ login, authUser, initialLoading, register, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

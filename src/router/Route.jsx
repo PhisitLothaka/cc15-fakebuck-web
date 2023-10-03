@@ -6,6 +6,7 @@ import FriendPage from "../page/FriendPage";
 import ProfilePage from "../page/ProfilePage";
 import { RouterProvider } from "react-router-dom";
 import RedirectIfAuthenticated from "../features/auth/RedirectIfAuthenticated";
+import Authenticated from "../features/auth/Authenticated";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +19,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <Authenticated>
+        <Layout />
+      </Authenticated>
+    ),
     children: [
       { path: "", element: <HomePage /> },
       { path: "friend", element: <FriendPage /> },
