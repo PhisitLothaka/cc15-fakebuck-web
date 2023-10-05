@@ -18,7 +18,7 @@ export default function AuthUserAction() {
         onClose={() => setIsOpen(false)}
         maxWith={44}
       >
-        <EditProfileForm />
+        <EditProfileForm onSuccess={() => setIsOpen(false)} />
       </Modal>
     </div>
   );

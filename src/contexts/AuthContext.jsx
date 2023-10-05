@@ -36,7 +36,7 @@ export default function AuthContextProvider({ children }) {
   };
 
   const register = async (registerInputObject) => {
-    const res = await axios.post("/auth/registe", registerInputObject);
+    const res = await axios.post("/auth/register", registerInputObject);
     addAccessToken(res.data.accessToken);
     setAuthUser(res.data.user);
   };
@@ -46,9 +46,21 @@ export default function AuthContextProvider({ children }) {
     setAuthUser(null);
   };
 
+  const updateProfile = async (data) => {
+    const res = await axios.patch("/user", data);
+    setAuthUser({ ...authUser, ...res.data });
+  };
+
   return (
     <AuthContext.Provider
-      value={{ login, authUser, initialLoading, register, logout }}
+      value={{
+        login,
+        authUser,
+        initialLoading,
+        register,
+        logout,
+        updateProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

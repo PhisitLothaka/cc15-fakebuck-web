@@ -1,13 +1,11 @@
-import { useState } from "react";
-import FormButton from "./FormButton";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-export default function PictureForm({ title, children }) {
-  const [file, setFile] = useState(null);
-  // if (file) {
-  //   console.log(URL.createObjectURL(file));
-  // }
+import FormButton from "./FormButton";
+
+export default function PictureForm({ title, children, initialSrc, onSave }) {
   const inputEl = useRef(null);
+  const [file, setFile] = useState(null);
+
   return (
     <div>
       <input
@@ -20,12 +18,18 @@ export default function PictureForm({ title, children }) {
           }
         }}
       />
-      <div className="flex items-center justify-between">
-        <h5 className="text-xl font-bold">{title}</h5>
+      <div className="flex justify-between items-center">
+        <h5 className="text-xl font-semibold">{title}</h5>
         <div>
           {file && (
             <>
-              <FormButton>Save</FormButton>
+              <FormButton
+                onClick={() => {
+                  onSave(file);
+                }}
+              >
+                Save
+              </FormButton>
               <FormButton
                 onClick={() => {
                   inputEl.current.value = "";
@@ -36,11 +40,19 @@ export default function PictureForm({ title, children }) {
               </FormButton>
             </>
           )}
-          <FormButton onClick={() => inputEl.current.click()}>Edit</FormButton>
+          <FormButton
+            onClick={() => {
+              inputEl.current.click();
+            }}
+          >
+            Edit
+          </FormButton>
         </div>
       </div>
-      <div className="flex justify-center items-center">
-        {children(file ? URL.createObjectURL(file) : undefined)}
+      <div className="flex justify-center">
+        {children(file ? URL.createObjectURL(file) : initialSrc, () => {
+          inputEl.current.click();
+        })}
       </div>
     </div>
   );
